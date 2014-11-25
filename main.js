@@ -35,10 +35,10 @@ primus.on('connection', function(spark) {
           });
         });
         databaseList[databaseID++] = db;
-        databasePathList[data.openargs.dbname] = db;
+        databasePathList[data.args.dbname] = db;
         break;
       case 'close':
-        databasePathList[data.openargs.dbname].close(function(err) {
+        databasePathList[data.args.dbname].close(function(err) {
           spark.write({
             command: 'closeComplete',
             err: err,
@@ -47,7 +47,7 @@ primus.on('connection', function(spark) {
         });
         break;
       case 'delete':
-        databasePathList[data.openargs.dbname].close(function(err) {
+        databasePathList[data.args.dbname].close(function(err) {
           fs.unlinkSync(databaseDirectory + data.openargs.dbname);
           spark.write({
             command: 'deleteComplete',
