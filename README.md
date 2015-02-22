@@ -1,9 +1,11 @@
 WebSQL Server
 =============
 
-websql-server exposes the WebSQL API through Websockets.
+[websql-server](https://github.com/MetaMemoryT/websql-server) exposes the
+WebSQL API through Websockets.
 
-websql-client connects to it.
+[websql-client](https://github.com/MetaMemoryT/websql-client) connects to a
+WebSQL API through Websockets.
 
 Usage
 ======
