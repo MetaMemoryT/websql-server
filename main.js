@@ -1,26 +1,37 @@
-var Primus = require('primus');
+/* globals process */
 var sqlite3 = require('sqlite3');
-
-var primus = Primus.createServer({
-  port: 8080,
-  transformer: 'websockets',
-  iknowhttpsisbetter: true
-});
+var fs = require('fs');
 
 var databaseID = 0;
 var databaseList = [];
 var databasePathList = [];
 var databaseDirectory = 'data/';
 
-primus.on('connection', function(spark) {
+module.exports.onConnection = function(spark) {
 
   console.log('connection occured');
 
   spark.on('data', function(data) {
-    console.log('data: ', data);
+    var db = null;
     switch (data.command) {
       case 'open':
-        var db = new sqlite3.Database(
+        console.log('open: ', databaseDirectory + data.args[0].name);
+        break;
+      case 'close':
+        console.log('open: ', databaseDirectory + data.args.dbname);
+        break;
+      case 'delete':
+        console.log('delete: ', databaseDirectory + data.openargs.dbname);
+        break;
+      case 'backgroundExecuteSqlBatch':
+        data.args[0].executes.forEach(function(a) {
+          console.log('run: ', a.query);
+        });
+        break;
+    }
+    switch (data.command) {
+      case 'open':
+        db = new sqlite3.Database(
           databaseDirectory + data.args[0].name, null,
           function(err) {
             // TODO why is this not printing??
@@ -35,7 +46,7 @@ primus.on('connection', function(spark) {
           });
         });
         databaseList[databaseID++] = db;
-        databasePathList[data.args.dbname] = db;
+        databasePathList[data.args[0].name] = db;
         break;
       case 'close':
         databasePathList[data.args.dbname].close(function(err) {
@@ -57,9 +68,60 @@ primus.on('connection', function(spark) {
         });
         break;
       case 'backgroundExecuteSqlBatch':
-        throw new Error();
+        db = databasePathList[data.args[0].dbargs.dbname];
+        if (!db) {
+          console.log('runFailed: db not found');
+          spark.write({
+            command: 'backgroundExecuteSqlBatchFailed',
+            err: 'runFailed: db not found',
+            id: data.id
+          });
+          return;
+        }
+        var queryArray = data.args[0].executes;
+        runQueries(data.id, spark, db, queryArray, []);
     }
   });
-});
+};
 
-console.log('server starting...');
+function runQueries(id, spark, db, queryArray, accumAnswer) {
+  if (queryArray.length < 1) {
+    spark.write({
+      command: 'backgroundExecuteSqlBatchComplete',
+      answer: accumAnswer,
+      id: id
+    });
+    return;
+  }
+  var top = queryArray.shift();
+  db.all(top.sql, top.params, function(err, rows) {
+    var newAnswer = {};
+    if (err) {
+      newAnswer.type = 'error';
+      newAnswer.qid = top.qid;
+      accumAnswer.push(newAnswer);
+      console.log('runFailed: ', err);
+      spark.write({
+        command: 'backgroundExecuteSqlBatchFailed',
+        err: err,
+        answer: accumAnswer,
+        id: id
+      });
+      return;
+    }
+    newAnswer.type = 'success';
+    newAnswer.qid = top.qid;
+    var newResult = {};
+    newResult.rows = rows;
+    newAnswer.result = newResult;
+    accumAnswer.push(newAnswer);
+    runQueries(id, spark, db, queryArray, accumAnswer);
+  });
+}
+
+// catch the uncaught errors that weren't wrapped in a domain or try catch statement
+// do not use this in modules, but only in applications, as otherwise we could have multiple of these bound
+process.on('uncaughtException', function(err) {
+  // handle the error safely
+  console.log('ERROR: ', err);
+});

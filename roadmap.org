@@ -1,2 +1,7 @@
 * DONE sqlite3
-* TODO websockets
+* DONE websockets
+* DONE description README.md
+* DONE MIT license
+* DONE websql-server executable script
+* DONE --port customization rather than hardcoded
+* TODO run tests
