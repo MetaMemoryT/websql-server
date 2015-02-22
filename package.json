@@ -1,7 +1,7 @@
 {
   "name": "websql-server",
   "version": "0.0.2",
-  "description": "websql-server exposes the WebSQL API through Websockets",
+  "description": "exposes the WebSQL API through Websockets",
   "main": "main.js",
   "scripts": {
     "main": "node main.js",
