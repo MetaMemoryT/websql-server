@@ -14,6 +14,7 @@ module.exports.onConnection = curry(function(options, spark) {
 
   spark.on('data', function(data) {
     var db = null;
+    console.log('data: ', data);
     switch (data.command) {
       case 'open':
         console.log('open: ', databaseDirectory + data.args[0].name);
@@ -25,8 +26,7 @@ module.exports.onConnection = curry(function(options, spark) {
         console.log('delete: ', databaseDirectory + data.openargs.dbname);
         break;
       case 'backgroundExecuteSqlBatch':
-        console.log('backgroundExecuteSqlBatch: ',
-          data);
+        console.log('backgroundExecuteSqlBatch: ', data);
         data.args[0].executes.forEach(function(a) {
           console.log('run: ', a.query);
         });
