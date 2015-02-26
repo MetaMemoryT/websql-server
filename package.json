@@ -18,8 +18,13 @@
   },
   "dependencies": {
     "commander": "^2.6.0",
+    "curry": "^1.2.0",
     "primus": "^2.4.10",
     "sqlite3": "^3.0.4",
     "ws": "^0.4.32"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-rimraf": "^0.1.1"
   }
 }

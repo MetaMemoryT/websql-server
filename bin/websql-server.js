@@ -18,4 +18,8 @@ var primus = Primus.createServer({
   iknowhttpsisbetter: true
 });
 
-primus.on('connection', websqlServerLib.onConnection);
+var options = {
+  forceMemory: program.forceMemory
+};
+
+primus.on('connection', websqlServerLib.onConnection(options));

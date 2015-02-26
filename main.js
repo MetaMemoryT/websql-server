@@ -1,13 +1,14 @@
 /* globals process */
 var sqlite3 = require('sqlite3');
 var fs = require('fs');
+var curry = require('curry');
 
 var databaseID = 0;
 var databaseList = [];
 var databasePathList = [];
 var databaseDirectory = 'data/';
 
-module.exports.onConnection = function(spark) {
+module.exports.onConnection = curry(function(options, spark) {
 
   console.log('connection occured');
 
@@ -33,8 +34,13 @@ module.exports.onConnection = function(spark) {
     }
     switch (data.command) {
       case 'open':
-        db = new sqlite3.Database(
-          databaseDirectory + data.args[0].name, null,
+        var databasePath = null;
+        if (options.forceMemory) {
+          databasePath = ':memory:';
+        } else {
+          databasePath = databaseDirectory + data.args[0].name;
+        }
+        db = new sqlite3.Database(databasePath, null,
           function(err) {
             // TODO why is this not printing??
             console.log('openComplete: err: ', err);
@@ -84,7 +90,7 @@ module.exports.onConnection = function(spark) {
         runQueries(data.id, spark, db, queryArray, []);
     }
   });
-};
+});
 
 function runQueries(id, spark, db, queryArray, accumAnswer) {
   if (queryArray.length < 1) {
