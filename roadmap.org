@@ -4,5 +4,6 @@
 * DONE MIT license
 * DONE websql-server executable script
 * DONE --port customization rather than hardcoded
+* TODO --force-memory
 * TODO websql-client
 * TODO run tests

@@ -24,6 +24,8 @@ module.exports.onConnection = function(spark) {
         console.log('delete: ', databaseDirectory + data.openargs.dbname);
         break;
       case 'backgroundExecuteSqlBatch':
+        console.log('backgroundExecuteSqlBatch: ',
+          data);
         data.args[0].executes.forEach(function(a) {
           console.log('run: ', a.query);
         });
