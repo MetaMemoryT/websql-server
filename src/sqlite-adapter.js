@@ -40,21 +40,35 @@ module.exports.onConnection = curry(function(options, spark) {
         } else {
           databasePath = databaseDirectory + data.args[0].name;
         }
-        db = new sqlite3.Database(databasePath, null,
-          function(err) {
-            // TODO why is this not printing??
-            console.log('openComplete: err: ', err);
-          });
-        db.on('open', function(err) {
+
+        // first check if its already opened
+        if (databasePathList[data.args[0].name]) {
           spark.write({
             command: 'openComplete',
-            err: err,
+            err: null,
             id: data.id,
-            databaseID: databaseID++
+            databaseID: databasePathList[data.args[0].name].databaseID
           });
-        });
-        databaseList[databaseID++] = db;
-        databasePathList[data.args[0].name] = db;
+          // else open it
+        } else {
+          var newDatabaseID = databaseID++;
+          db = new sqlite3.Database(databasePath, null,
+            function(err) {
+              // TODO why is this not printing??
+              console.log('openComplete: err: ', err);
+            });
+          db.on('open', function(err) {
+            spark.write({
+              command: 'openComplete',
+              err: err,
+              id: data.id,
+              databaseID: newDatabaseID
+            });
+          });
+          db.databaseID = newDatabaseID;
+          databaseList[newDatabaseID] = db;
+          databasePathList[data.args[0].name] = db;
+        }
         break;
       case 'close':
         databasePathList[data.args.dbname].close(function(err) {
