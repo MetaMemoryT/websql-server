@@ -111,7 +111,7 @@ function runQueries(id, spark, db, queryArray, accumAnswer) {
       console.log('runFailed: ', err);
       spark.write({
         command: 'backgroundExecuteSqlBatchFailed',
-        err: err,
+        err: err.toString(),
         answer: accumAnswer,
         id: id
       });
@@ -126,10 +126,3 @@ function runQueries(id, spark, db, queryArray, accumAnswer) {
     runQueries(id, spark, db, queryArray, accumAnswer);
   });
 }
-
-// catch the uncaught errors that weren't wrapped in a domain or try catch statement
-// do not use this in modules, but only in applications, as otherwise we could have multiple of these bound
-process.on('uncaughtException', function(err) {
-  // handle the error safely
-  console.log('ERROR: ', err);
-});

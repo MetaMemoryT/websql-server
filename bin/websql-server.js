@@ -2,7 +2,7 @@
 
 var Primus = require('primus');
 var program = require('commander');
-var websqlServerLib = require('../main.js');
+var websqlServerLib = require('../src/sqlite-adapter.js');
 
 program
   .version('0.0.2')
@@ -23,3 +23,11 @@ var options = {
 };
 
 primus.on('connection', websqlServerLib.onConnection(options));
+
+// catch the uncaught errors that weren't wrapped in a domain or try catch
+// statement do not use this in modules, but only in applications
+// as otherwise we could have multiple of these bound
+process.on('uncaughtException', function(err) {
+  // handle the error safely
+  console.log('ERROR: ', err);
+});
