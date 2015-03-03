@@ -5,6 +5,7 @@
 * DONE websql-server executable script
 * DONE --port customization rather than hardcoded
 * DONE --force-memory
+* TODO document cli options
 * TODO npm release
 * TODO websql-client
 * TODO run tests
