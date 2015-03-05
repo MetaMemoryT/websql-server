@@ -1,4 +1,3 @@
-/* globals process */
 var sqlite3 = require('sqlite3');
 var fs = require('fs');
 var curry = require('curry');
@@ -26,10 +25,12 @@ module.exports.onConnection = curry(function(options, spark) {
         console.log('delete: ', databaseDirectory + data.openargs.dbname);
         break;
       case 'backgroundExecuteSqlBatch':
-        console.log('backgroundExecuteSqlBatch: ', data);
+        console.log('backgroundExecuteSqlBatch: ', data.toString());
+        /*
         data.args[0].executes.forEach(function(a) {
           console.log('run: ', a.query);
         });
+        */
         break;
     }
     switch (data.command) {
