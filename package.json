@@ -4,8 +4,11 @@
   "description": "exposes the WebSQL API through Websockets",
   "main": "main.js",
   "scripts": {
-    "main": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "node --harmony bin/websql-server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "debug": "node-debug --preload=false --web-port 8081 --nodejs --harmony bin/websql-server.js",
+    "debug2": "node-debug --web-port 8081 --nodejs --harmony bin/websql-server.js",
+    "debug3": "node --debug-brk --harmony bin/websql-server.js"
   },
   "author": "MetaMemoryT",
   "license": "MIT",

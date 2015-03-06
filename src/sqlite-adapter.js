@@ -7,13 +7,24 @@ var databaseList = [];
 var databasePathList = [];
 var databaseDirectory = 'data/';
 
-module.exports.onConnection = curry(function(options, spark) {
+module.exports.onConnection = curry(onConnectionNoCurry);
+
+function prettyPrintArgs(args) {
+  console.log('args: ');
+  for (var e of args) {
+    console.log(e.dbargs.dbname);
+    for (var sql of e.executes)
+      console.log(sql);
+  }
+}
+
+function onConnectionNoCurry(options, spark) {
 
   console.log('connection occured');
 
   spark.on('data', function(data) {
     var db = null;
-    console.log('data: ', data);
+
     switch (data.command) {
       case 'open':
         console.log('open: ', databaseDirectory + data.args[0].name);
@@ -26,13 +37,11 @@ module.exports.onConnection = curry(function(options, spark) {
         break;
       case 'backgroundExecuteSqlBatch':
         console.log('backgroundExecuteSqlBatch: ', data.toString());
-        /*
-        data.args[0].executes.forEach(function(a) {
-          console.log('run: ', a.query);
-        });
-        */
+        prettyPrintArgs(data.args);
         break;
     }
+    // console.log('data: ', data);
+
     switch (data.command) {
       case 'open':
         var databasePath = null;
@@ -105,7 +114,7 @@ module.exports.onConnection = curry(function(options, spark) {
         runQueries(data.id, spark, db, queryArray, []);
     }
   });
-});
+}
 
 function runQueries(id, spark, db, queryArray, accumAnswer) {
   if (queryArray.length < 1) {
