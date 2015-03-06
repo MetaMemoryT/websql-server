@@ -31,3 +31,27 @@ process.on('uncaughtException', function(err) {
   // handle the error safely
   console.log('ERROR: ', err);
 });
+
+// http://stackoverflow.com/questions/14031763/doing-a-cleanup-action-just-before-node-js-exits
+process.stdin.resume(); //so the program will not close instantly
+
+function exitHandler(options, err) {
+  if (options.cleanup) console.log('exiting');
+  if (err) console.log(err.stack);
+  if (options.exit) process.exit();
+}
+
+//do something when app is closing
+process.on('exit', exitHandler.bind(null, {
+  cleanup: true
+}));
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {
+  exit: true
+}));
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, {
+  exit: true
+}));

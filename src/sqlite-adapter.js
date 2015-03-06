@@ -10,11 +10,16 @@ var databaseDirectory = 'data/';
 module.exports.onConnection = curry(onConnectionNoCurry);
 
 function prettyPrintArgs(args) {
-  console.log('args: ');
+  var first = true;
   for (var e of args) {
-    console.log(e.dbargs.dbname);
-    for (var sql of e.executes)
-      console.log(sql);
+    if (first) {
+      console.log('backgroundExecuteSqlBatch: ', e.dbargs.dbname);
+      first = false;
+    }
+    for (var sql of e.executes) {
+      debugger;
+      console.log('  params: ', sql.params, ' sql: ', sql.sql);
+    }
   }
 }
 
@@ -36,7 +41,6 @@ function onConnectionNoCurry(options, spark) {
         console.log('delete: ', databaseDirectory + data.openargs.dbname);
         break;
       case 'backgroundExecuteSqlBatch':
-        console.log('backgroundExecuteSqlBatch: ', data.toString());
         prettyPrintArgs(data.args);
         break;
     }
