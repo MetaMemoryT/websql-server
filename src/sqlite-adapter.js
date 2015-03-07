@@ -17,7 +17,6 @@ function prettyPrintArgs(args) {
       first = false;
     }
     for (var sql of e.executes) {
-      debugger;
       console.log('  params: ', sql.params, ' sql: ', sql.sql);
     }
   }
@@ -44,7 +43,6 @@ function onConnectionNoCurry(options, spark) {
         prettyPrintArgs(data.args);
         break;
     }
-    // console.log('data: ', data);
 
     switch (data.command) {
       case 'open':
