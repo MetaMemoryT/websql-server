@@ -1,5 +1,5 @@
 # WebSQL Server
-[![npm version](https://badge.fury.io/js/websql-server.svg)](http://badge.fury.io/js/websql-server)
+[![NPM](https://nodei.co/npm/websql-server.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/websql-server/)
 
 [websql-server](https://github.com/MetaMemoryT/websql-server) exposes a sqlite
 API originally defined at
