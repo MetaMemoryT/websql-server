@@ -64,7 +64,8 @@ function onConnectionNoCurry(options, spark) {
           // else open it
         } else {
           var newDatabaseID = databaseID++;
-          db = new sqlite3.Database(databasePath, null,
+          // https://github.com/mapbox/node-sqlite3/wiki/Caching
+          db = new sqlite3.cached.Database(databasePath, null,
             function(err) {
               // TODO why is this not printing??
               console.log('openComplete: err: ', err);
